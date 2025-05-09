@@ -1,0 +1,34 @@
+library(ggplot2)
+
+
+egitim_veri <- data.frame(
+  Egitim_Duzeyi = c("Okur-Yazar Degil", "Ilkokul", "Ortaokul", "Lise", 
+                    "Meslek Lisesi", "On Lisans", "Lisans", "Yuksek Lisans"),
+  Issiz_Sayisi = c(50000, 120000, 200000, 250000, 180000, 100000, 220000, 30000)
+)
+
+# Yuzde hesaplama
+egitim_veri$Yuzde <- round(egitim_veri$Issiz_Sayisi / sum(egitim_veri$Issiz_Sayisi) * 100, 1)
+
+# Etiket: Egitim + %
+egitim_veri$Etiket <- paste0(egitim_veri$Egitim_Duzeyi, "\n", egitim_veri$Yuzde, "%")
+
+# Grafik
+ggplot(egitim_veri, aes(x = "", y = Issiz_Sayisi, fill = Egitim_Duzeyi)) +
+  geom_bar(width = 1, stat = "identity", color = "white") +
+  coord_polar("y", start = 0) +
+  geom_text(aes(label = paste0(Yuzde, "%")), 
+            position = position_stack(vjust = 0.5), 
+            size = 2.5, color = "black", fontface = "bold") +
+  labs(
+    title = "2025 - Egitim Duzeyine Gore Issizlik Orani",
+    caption = "Kaynak: TUIK 2025 Isgucu Istatistikleri"
+  ) +
+  theme_void(base_size = 14) +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 18),
+    plot.caption = element_text(hjust = 0.5, size = 10),
+    legend.title = element_blank(),
+    legend.position = "right"
+  ) +
+  scale_fill_brewer(palette = "Pastel1")
