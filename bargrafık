@@ -1,0 +1,39 @@
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Veriler (2020 ve 2025 yılları için iş gücü göstergeleri)
+veri <- data.frame(
+  Yil = rep(c(2020, 2025), each = 3),
+  Cinsiyet = rep(c("Erkek", "Kadın", "Toplam"), times = 2),
+  IsgucuneKatilmaOrani = c(70.0, 35.5, 52.8, 71.9, 36.7, 54.1),
+  IstihdamOrani = c(65.5, 31.5, 48.5, 67.3, 32.5, 49.6),
+  IssizlikOrani = c(7.5, 12.0, 9.0, 6.9, 11.4, 8.5)
+)
+
+# Veriyi uzun formata dönüştürme
+veri_long <- veri %>%
+  pivot_longer(cols = c(IsgucuneKatilmaOrani, IstihdamOrani, IssizlikOrani),
+               names_to = "Kategori", values_to = "Oran")
+
+# Grafik
+ggplot(veri_long, aes(x = interaction(Yil, Cinsiyet), y = Oran, fill = Cinsiyet)) +
+  geom_bar(stat = "identity", position = "dodge", width = 0.5) +
+  facet_wrap(~ Kategori, scales = "free_y") +
+  labs(
+    title = "Kadın ve Erkek İş Gücü Oranları (2020-2025)",
+    subtitle = "2020 ve 2025 yılları arasında kadın ve erkek iş gücü göstergelerinin karşılaştırılması",
+    x = "Yıl ve Cinsiyet",
+    y = "Oran (%)"
+  ) +
+  theme_minimal(base_size = 14) +
+  scale_fill_manual(values = c("blue", "red", "gray")) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),  # Başlık orta hizalı
+    plot.subtitle = element_text(size = 14, hjust = 0.5),  # Alt başlık orta hizalı
+    axis.text.x = element_text(angle = 45, hjust = 1),  # X eksenini eğik yaparak okunabilirlik
+    axis.title = element_text(size = 14),
+    strip.text = element_text(face = "bold", size = 14),
+    legend.title = element_blank(),
+    legend.position = "top"
+  )
