@@ -1,0 +1,37 @@
+library(ggplot2)
+
+
+iller <- c("Hakkari", "Sirnak", "Mardin", "Batman", "Siirt", 
+           "Van", "Bitlis", "Mus", "Agri", "Igdir")
+issizlik_oranlari <- c(18.3, 17.5, 16.8, 16.2, 15.9, 15.5, 15.2, 14.8, 14.5, 14.2)
+
+# Veri cercevesi
+veri <- data.frame(
+  Il = iller,
+  IssizlikOrani = issizlik_oranlari
+)
+
+# Siralama
+veri$Il <- factor(veri$Il, levels = veri$Il[order(veri$IssizlikOrani, decreasing = TRUE)])
+
+# Grafik
+ggplot(veri, aes(x = Il, y = IssizlikOrani, fill = IssizlikOrani)) +
+  geom_col(width = 0.7) +
+  geom_text(aes(label = paste0(IssizlikOrani, "%")), vjust = -0.5, size = 4.5, color = "black") +
+  labs(
+    title = "2025 Yılı En Yüksek İşsizlik Oranına Sahip 10 İl",
+    subtitle = "İller, işsizlik oranına göre yüksekten düşüğe sıralanmıştır",
+    x = "İl",
+    y = "İşsizlik Oranı (%)",
+    caption = "Kaynak: TÜİK 2025 İşgücü İstatistikleri"
+  ) +
+  theme_minimal(base_size = 10) +
+  scale_fill_gradient(low = "#AED6F1", high = "#1F618D") +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),
+    plot.subtitle = element_text(size = 12, hjust = 0.5),
+    plot.caption = element_text(size = 9, hjust = 0),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  ) +
+  ylim(0, max(veri$IssizlikOrani) + 2)
